@@ -1,6 +1,14 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, Layout, Smartphone, PenTool, Type } from "lucide-react";
+import { ArrowUpRight, Layout, Sparkles, PenTool, Type } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import LogoLoop from "@/components/ui/logo-loop";
+import DockerLogo from "../../assets/Docker.png";
+import GithubLogo from "../../assets/github.png";
+import NextLogo from "../../assets/next-js-logo-small.png";
+import ReactLogo from "../../assets/React.png";
+import SupabaseLogo from "../../assets/supabase.png";
+import TailwindLogo from "../../assets/tailwind.png";
+import TypescriptLogo from "../../assets/typescript.png";
 
 const services = [
   {
@@ -9,9 +17,9 @@ const services = [
     description: "Creating immersive web experiences that balance aesthetics with functionality."
   },
   {
-    icon: Smartphone,
-    title: "App Interface",
-    description: "Designing intuitive mobile interfaces focused on user engagement and clarity."
+    icon: Sparkles,
+    title: "AI Video/Image Generation",
+    description: "Leveraging AI tools to produce stunning visuals and dynamic video content for brands."
   },
   {
     icon: PenTool,
@@ -69,6 +77,24 @@ export default function Services() {
             </motion.div>
           ))}
         </div>
+      </div>
+      <div className="mt-16">
+        <LogoLoop
+          logos={[
+            { src: DockerLogo, alt: "Docker" },
+            { src: GithubLogo, alt: "GitHub" },
+            { src: NextLogo, alt: "Next.js" },
+            { src: ReactLogo, alt: "React" },
+            { src: SupabaseLogo, alt: "Supabase" },
+            { src: TailwindLogo, alt: "Tailwind CSS" },
+            { src: TypescriptLogo, alt: "TypeScript" }
+          ]}
+          speed={120}
+          gap={40}
+          logoHeight={48}
+          scaleOnHover={true}
+          className="w-full"
+        />
       </div>
     </section>
   );

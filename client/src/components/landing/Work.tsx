@@ -7,24 +7,27 @@ import { Badge } from "@/components/ui/badge";
 const projects = [
   {
     id: 1,
-    title: "LUMINA BRANDING",
+    title: "PEARL REALTY BRANDING",
     category: "Identity",
     image: project1,
-    year: "2025"
+    year: "2025",
+    link: "https://www.instagram.com/_pearlrealty_/"
   },
   {
     id: 2,
-    title: "NEXUS APP",
-    category: "UI/UX Design",
+    title: "ASB ENGINEERING WEBSITE",
+    category: "Web Design",
     image: project2,
-    year: "2025"
+    year: "2025",
+    link: "https://asbengineeringservices.com/"
   },
   {
     id: 3,
-    title: "VOGUE EDITORIAL",
+    title: "SHIROOR MUTH",
     category: "Web Design",
     image: project3,
-    year: "2024"
+    year: "2024",
+    link: "https://shiroormatha.org/"
   }
 ];
 
@@ -49,21 +52,39 @@ export default function Work() {
               transition={{ duration: 0.8 }}
               className="group cursor-pointer"
             >
-              <div className="relative overflow-hidden mb-8 rounded-sm">
-                <motion.div 
-                  initial={{ scale: 1.2 }}
-                  whileInView={{ scale: 1 }}
-                  transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" 
-                />
-                <motion.img 
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.8, ease: "circOut" }}
-                  src={project.image} 
-                  alt={project.title} 
-                  className="w-full aspect-video object-cover"
-                />
-              </div>
+              {project.link ? (
+                <a href={project.link} target="_blank" rel="noopener noreferrer" className="block relative overflow-hidden mb-8 rounded-sm">
+                  <motion.div 
+                    initial={{ scale: 1.2 }}
+                    whileInView={{ scale: 1 }}
+                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" 
+                  />
+                  <motion.img 
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.8, ease: "circOut" }}
+                    src={project.image} 
+                    alt={project.title} 
+                    className="w-full aspect-video object-cover"
+                  />
+                </a>
+              ) : (
+                <div className="relative overflow-hidden mb-8 rounded-sm">
+                  <motion.div 
+                    initial={{ scale: 1.2 }}
+                    whileInView={{ scale: 1 }}
+                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" 
+                  />
+                  <motion.img 
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.8, ease: "circOut" }}
+                    src={project.image} 
+                    alt={project.title} 
+                    className="w-full aspect-video object-cover"
+                  />
+                </div>
+              )}
               
               <div className="flex justify-between items-start border-t border-white/10 pt-6">
                 <div>

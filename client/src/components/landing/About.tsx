@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import profileImg from "../../assets/profile.png";
+import ProfileCard from "../ui/profile-card";
 
 const stats = [
-  { value: "08", label: "YEARS EXPERIENCE" },
-  { value: "40+", label: "PROJECTS COMPLETED" },
-  { value: "12", label: "AWARDS WON" },
+  { value: "02", label: "YEARS EXPERIENCE" },
+  { value: "10+", label: "PROJECTS COMPLETED" },
+  // { value: "12", label: "AWARDS WON" },
   { value: "100%", label: "CLIENT SATISFACTION" }
 ];
 
@@ -20,11 +21,15 @@ export default function About() {
             transition={{ duration: 0.8 }}
             className="relative"
           >
-            <div className="absolute inset-0 bg-accent/10 translate-x-4 translate-y-4 rounded-sm" />
-            <img 
-              src={profileImg} 
-              alt="Profile" 
-              className="w-full aspect-[4/5] object-cover grayscale hover:grayscale-0 transition-all duration-700 rounded-sm relative z-10"
+            <ProfileCard
+              avatarUrl={profileImg}
+              name="Vinith Shetty"
+              title="Digital Designer"
+              handle="vinithshetty"
+              status="Online"
+              contactText="Contact"
+              showUserInfo={true}
+              enableTilt={true}
             />
           </motion.div>
 

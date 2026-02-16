@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, Instagram, Linkedin, Twitter } from "lucide-react";
+import { ArrowRight, Mail, Instagram, Linkedin, Github } from "lucide-react";
 
 const faqs = [
   {
@@ -21,7 +21,7 @@ const faqs = [
   },
   {
     question: "What are your deliverables?",
-    answer: "Depending on the project, deliverables typically include brand guidelines, UI kits, high-fidelity mockups, and interactive prototypes."
+    answer: "Depending on the project, deliverables typically include project proposal, pricing, interactive prototypes and schedule/timeline."
   },
   {
     question: "How long does a typical project take?",
@@ -91,10 +91,10 @@ export default function Contact() {
         <div className="mt-32 pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-muted-foreground text-sm">© 2026 Digital Designer Portfolio. All rights reserved.</p>
           <div className="flex gap-6">
-            <a href="#" className="text-muted-foreground hover:text-accent transition-colors"><Twitter className="w-5 h-5" /></a>
-            <a href="#" className="text-muted-foreground hover:text-accent transition-colors"><Instagram className="w-5 h-5" /></a>
-            <a href="#" className="text-muted-foreground hover:text-accent transition-colors"><Linkedin className="w-5 h-5" /></a>
-            <a href="#" className="text-muted-foreground hover:text-accent transition-colors"><Mail className="w-5 h-5" /></a>
+            <a href="https://github.com/VinithShetty" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors"><Github className="w-5 h-5" /></a>
+            <a href="https://www.instagram.com/vinith_shetty.11/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors"><Instagram className="w-5 h-5" /></a>
+            <a href="https://www.linkedin.com/in/vinith-shetty-451a99250/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors"><Linkedin className="w-5 h-5" /></a>
+            <a href="mailto:vinithshetty96@gmail.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors"><Mail className="w-5 h-5" /></a>
           </div>
         </div>
       </div>

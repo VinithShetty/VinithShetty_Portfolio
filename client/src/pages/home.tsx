@@ -23,7 +23,7 @@ export default function Home() {
 
       {/* Navigation (Simple) */}
       <nav className="fixed top-0 left-0 right-0 p-6 md:p-8 flex justify-between items-center z-40 mix-blend-difference text-white">
-        <a href="#" className="text-xl font-bold tracking-tighter">JN.Design</a>
+        <a href="#" className="text-xl font-bold tracking-tighter">VS.Design</a>
         <a href="#contact" className="hidden md:inline-block text-sm font-medium hover:text-accent transition-colors">
           AVAILABLE FOR FREELANCE
         </a>
