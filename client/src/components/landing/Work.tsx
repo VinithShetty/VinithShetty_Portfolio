@@ -50,10 +50,15 @@ export default function Work() {
               className="group cursor-pointer"
             >
               <div className="relative overflow-hidden mb-8 rounded-sm">
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" />
+                <motion.div 
+                  initial={{ scale: 1.2 }}
+                  whileInView={{ scale: 1 }}
+                  transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" 
+                />
                 <motion.img 
-                  whileHover={{ scale: 1.03 }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.8, ease: "circOut" }}
                   src={project.image} 
                   alt={project.title} 
                   className="w-full aspect-video object-cover"

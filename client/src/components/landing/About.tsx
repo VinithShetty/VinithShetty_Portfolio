@@ -46,10 +46,16 @@ export default function About() {
 
             <div className="grid grid-cols-2 gap-y-12 gap-x-8 border-t border-white/10 pt-12">
               {stats.map((stat, index) => (
-                <div key={index}>
+                <motion.div 
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
+                >
                   <h4 className="text-4xl md:text-5xl font-bold mb-2">{stat.value}</h4>
                   <p className="text-xs font-mono tracking-widest text-muted-foreground">{stat.label}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>

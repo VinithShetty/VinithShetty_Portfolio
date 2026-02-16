@@ -42,10 +42,15 @@ export default function Services() {
           {services.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ 
+                duration: 0.8, 
+                delay: index * 0.1,
+                ease: [0.16, 1, 0.3, 1] 
+              }}
+              whileHover={{ y: -10 }}
             >
               <Card className="bg-transparent border-white/10 hover:border-accent/50 transition-colors duration-300 h-full group">
                 <CardContent className="p-8 flex flex-col h-full justify-between min-h-[300px]">

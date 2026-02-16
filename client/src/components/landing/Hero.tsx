@@ -16,11 +16,23 @@ export default function Hero() {
           Portfolio 2026
         </span>
         
-        <h1 className="text-[12vw] leading-[0.8] font-black tracking-tighter text-foreground mb-8">
+        <motion.h1 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="text-[12vw] leading-[0.8] font-black tracking-tighter text-foreground mb-8"
+        >
           DIGITAL
           <br />
-          <span className="text-muted-foreground">DESIGNER</span>
-        </h1>
+          <motion.span 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 1 }}
+            className="text-muted-foreground"
+          >
+            DESIGNER
+          </motion.span>
+        </motion.h1>
 
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-12 mt-12">
           <p className="text-xl md:text-2xl text-muted-foreground max-w-xl font-light leading-relaxed">
