@@ -1,4 +1,5 @@
 import Hero from "@/components/landing/Hero";
+import FreelanceButton from "@/components/ui/freelance-button";
 import Services from "@/components/landing/Services";
 import About from "@/components/landing/About";
 import Work from "@/components/landing/Work";
@@ -24,9 +25,9 @@ export default function Home() {
       {/* Navigation (Simple) */}
       <nav className="fixed top-0 left-0 right-0 p-6 md:p-8 flex justify-between items-center z-40 mix-blend-difference text-white">
         <a href="#" className="text-xl font-bold tracking-tighter">VS.Design</a>
-        <a href="#contact" className="hidden md:inline-block text-sm font-medium hover:text-accent transition-colors">
-          AVAILABLE FOR FREELANCE
-        </a>
+        <span className="hidden md:inline-block">
+          <FreelanceButton />
+        </span>
       </nav>
 
       <main>

@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import profileImg from "../../assets/profile.png";
 import ProfileCard from "../ui/profile-card";
+import VariableProximity from "../ui/variable-proximity";
+import { useRef } from "react";
 
 const stats = [
   { value: "02", label: "YEARS EXPERIENCE" },
@@ -10,8 +12,9 @@ const stats = [
 ];
 
 export default function About() {
+  const containerRef = useRef(null);
   return (
-    <section className="py-32 px-6 md:px-12 lg:px-24 bg-secondary/20 overflow-hidden">
+    <section className="py-32 px-6 md:px-12 lg:px-24 bg-secondary/20 overflow-hidden" ref={containerRef}>
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <motion.div
@@ -42,10 +45,28 @@ export default function About() {
             
             <div className="space-y-6 text-lg text-muted-foreground font-light mb-12">
               <p>
-                I am a multidisciplinary digital designer focused on creating meaningful experiences through clean aesthetics and strategic thinking. My work bridges the gap between functional utility and emotional connection.
+                <VariableProximity
+                  label="I am a multidisciplinary digital designer focused on creating meaningful experiences through clean aesthetics and strategic thinking. My work bridges the gap between functional utility and emotional connection."
+                  fromFontVariationSettings="'wght' 400, 'wdth' 100"
+                  toFontVariationSettings="'wght' 700, 'wdth' 120"
+                  containerRef={containerRef}
+                  radius={120}
+                  falloff="exponential"
+                  className="inline-block"
+                  style={{ fontSize: '1.125rem', color: 'inherit', fontFamily: 'Roboto Flex, sans-serif' }}
+                />
               </p>
               <p>
-                With a background in both graphic design and frontend development, I approach every project with a holistic perspective, ensuring that the visual language speaks clearly while the interaction feels seamless.
+                <VariableProximity
+                  label="With a background in both graphic design and frontend development, I approach every project with a holistic perspective, ensuring that the visual language speaks clearly while the interaction feels seamless."
+                  fromFontVariationSettings="'wght' 400, 'wdth' 100"
+                  toFontVariationSettings="'wght' 700, 'wdth' 120"
+                  containerRef={containerRef}
+                  radius={120}
+                  falloff="exponential"
+                  className="inline-block"
+                  style={{ fontSize: '1.125rem', color: 'inherit', fontFamily: 'Roboto Flex, sans-serif' }}
+                />
               </p>
             </div>
 
