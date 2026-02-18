@@ -37,12 +37,12 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-[9vw] leading-[0.85] font-black tracking-tighter text-foreground mb-8 w-full"
+          className="text-5xl xs:text-6xl sm:text-7xl md:text-[7vw] lg:text-[9vw] leading-[1] font-black tracking-tighter text-foreground mb-8 w-full"
         >
           DIGITAL
           <br />
            <span
-             className="text-6xl font-extrabold text-white tracking-wide"
+             className="block text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-wide"
              style={{ letterSpacing: '0.12em', fontFamily: 'Zen Dots, Montserrat, Poppins, Oswald, sans-serif' }}
            >
              <RotatingText
