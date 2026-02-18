@@ -9,6 +9,7 @@ import ReactLogo from "../../assets/React.png";
 import SupabaseLogo from "../../assets/supabase.png";
 import TailwindLogo from "../../assets/tailwind.png";
 import TypescriptLogo from "../../assets/typescript.png";
+import WordpressLogo from "@/assets/wordpress.png";
 
 const services = [
   {
@@ -87,7 +88,8 @@ export default function Services() {
             { src: ReactLogo, alt: "React" },
             { src: SupabaseLogo, alt: "Supabase" },
             { src: TailwindLogo, alt: "Tailwind CSS" },
-            { src: TypescriptLogo, alt: "TypeScript" }
+            { src: TypescriptLogo, alt: "TypeScript" },
+            { src: WordpressLogo, alt: "WordPress" }
           ]}
           speed={120}
           gap={40}

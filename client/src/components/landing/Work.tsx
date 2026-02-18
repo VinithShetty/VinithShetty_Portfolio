@@ -4,6 +4,7 @@ import project2 from "../../assets/project2.png";
 import project3 from "../../assets/project3.png";
 import { Badge } from "@/components/ui/badge";
 
+
 const projects = [
   {
     id: 1,
@@ -46,7 +47,7 @@ export default function Work() {
         </div>
 
         <div className="space-y-32">
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <motion.div
               key={project.id}
               initial={{ opacity: 0, y: 50 }}
@@ -121,7 +122,6 @@ export default function Work() {
                   </motion.div>
                 </div>
               )}
-              
               <div className="flex justify-between items-start border-t border-white/10 pt-6">
                 <div>
                   <h3 className="text-3xl md:text-4xl font-bold mb-2 group-hover:text-accent transition-colors duration-300">
