@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
 import { ArrowRight, Mail, Instagram, Linkedin, Github } from "lucide-react";
+import { useRef, useState } from "react";
+import { toast } from "@/hooks/use-toast";
 
 const faqs = [
   {
@@ -30,6 +32,37 @@ const faqs = [
 ];
 
 export default function Contact() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [notification, setNotification] = useState<string | null>(null);
+  const [notificationType, setNotificationType] = useState<'success' | 'error' | null>(null);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = formRef.current;
+    if (!form) return;
+    const formData = new FormData(form);
+    try {
+      const response = await fetch("https://formspree.io/f/xdaldjkk", {
+        method: "POST",
+        headers: { 'Accept': 'application/json' },
+        body: formData,
+      });
+      if (response.ok) {
+        form.reset();
+        setNotification("Thank you for reaching out. I'll get back to you soon.");
+        setNotificationType('success');
+      } else {
+        setNotification("There was a problem sending your message. Please try again later.");
+        setNotificationType('error');
+      }
+    } catch {
+      setNotification("There was a problem sending your message. Please try again later.");
+      setNotificationType('error');
+    }
+    setTimeout(() => {
+      setNotification(null);
+      setNotificationType(null);
+    }, 5000);
+  };
   return (
     <section className="py-32 px-6 md:px-12 lg:px-24 bg-background relative">
       <div className="max-w-7xl mx-auto">
@@ -55,7 +88,19 @@ export default function Contact() {
           </div>
 
           {/* Contact Form Column */}
-          <div className="bg-secondary/10 p-8 md:p-12 rounded-sm border border-white/5">
+          <div className="bg-secondary/10 p-8 md:p-12 rounded-sm border border-white/5 relative">
+            {notification && (
+              <div
+                className={`absolute left-1/2 -translate-x-1/2 bottom-[-3.5rem] z-50 px-6 py-3 rounded shadow-lg text-base font-medium transition-all duration-300 ${
+                  notificationType === 'success'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-red-700 text-white'
+                }`}
+                style={{ minWidth: 250, textAlign: 'center' }}
+              >
+                {notification}
+              </div>
+            )}
             <h2 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4">
               LET'S TALK
             </h2>
@@ -63,24 +108,24 @@ export default function Contact() {
               Ready to start your next project? Fill out the form below or email me directly at hello@example.com
             </p>
 
-            <form className="space-y-6">
+            <form className="space-y-6" ref={formRef} onSubmit={handleSubmit}>
+              {/* Formspree does not require hidden fields for free tier */}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-muted-foreground">Name</label>
-                  <Input placeholder="John Doe" className="bg-background/50 border-white/10 h-12" />
+                  <Input name="name" required placeholder="John Doe" className="bg-background/50 border-white/10 h-12" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-muted-foreground">Email</label>
-                  <Input placeholder="john@example.com" type="email" className="bg-background/50 border-white/10 h-12" />
+                  <Input name="email" required placeholder="john@example.com" type="email" className="bg-background/50 border-white/10 h-12" />
                 </div>
               </div>
-              
               <div className="space-y-2">
                 <label className="text-sm font-medium text-muted-foreground">Message</label>
-                <Textarea placeholder="Tell me about your project..." className="bg-background/50 border-white/10 min-h-[150px] resize-none" />
+                <Textarea name="message" required placeholder="Tell me about your project..." className="bg-background/50 border-white/10 min-h-[150px] resize-none" />
               </div>
-
-              <Button size="lg" className="w-full bg-foreground text-background hover:bg-accent hover:text-foreground text-lg h-14 rounded-full mt-4 group">
+              <Button type="submit" size="lg" className="w-full bg-foreground text-background hover:bg-accent hover:text-foreground text-lg h-14 rounded-full mt-4 group">
                 Send Message
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
