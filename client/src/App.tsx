@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import GradualBlur from "@/components/ui/gradual-blur";
+import { SmoothCursor } from "@/components/ui/smooth-cursor";
 
 function Router() {
   return (
@@ -20,6 +21,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <SmoothCursor />
         <Toaster />
         <Router />
         <GradualBlur preset="page-footer" />
