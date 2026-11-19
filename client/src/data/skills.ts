@@ -8,7 +8,7 @@ export const skillGroups: SkillGroup[] = [
     items: ["Generative AI", "LLMs", "RAG", "AI Agents", "Prompt Engineering", "Vector Databases", "AI Automation"],
   },
   { title: "Machine Learning & Data", items: ["NumPy", "Pandas", "Scikit-Learn", "Matplotlib"] },
-  { title: "Languages", items: ["Python", "JavaScript", "TypeScript", "C", "SQL", "HTML", "CSS"] },
+  { title: "Languages", items: ["Python", "JavaScript", "TypeScript", "SQL", "HTML", "CSS"] },
   { title: "Backend & APIs", items: ["FastAPI", "Flask", "Node.js", "REST APIs", "Redis", "Celery"] },
   { title: "Frontend & Full-Stack", items: ["React.js", "Next.js", "Tailwind CSS", "WordPress"] },
   { title: "Databases & Vector Stores", items: ["PostgreSQL / pgvector", "MongoDB", "MySQL", "Supabase", "Pinecone", "Qdrant"] },

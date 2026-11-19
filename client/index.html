@@ -23,7 +23,8 @@
     <link rel="canonical" href="https://vinithportfolio.vinithshetty96.workers.dev/" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
     <!-- Structured Data for SEO -->
     <script type="application/ld+json">
       {
@@ -41,9 +42,20 @@
         "description": "AI engineer and full-stack developer."
       }
     </script>
+    <style>
+      html { background: #f4f5f0; }
+      #boot { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; background: #131313; }
+      #boot span { font: 600 clamp(2.8rem, 13.2vw, 12rem)/0.95 "Inter Tight", "Inter", system-ui, sans-serif; letter-spacing: -0.05em;
+        color: transparent; -webkit-text-stroke: 1.5px rgb(244 245 240 / 0.32); white-space: nowrap; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Boot splash: visible while the JavaScript downloads; React swaps it for the animated loader. -->
+      <div id="boot" aria-hidden="true">
+        <span>Vinith Shetty</span>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

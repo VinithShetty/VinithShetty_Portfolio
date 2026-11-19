@@ -2,10 +2,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { profile } from "@/data/profile";
 import { visibleNav } from "@/lib/sections";
-import { onScroll, scrollToId, startScroll, stopScroll } from "@/lib/smooth-scroll";
+import { onScroll, scrollToId } from "@/lib/smooth-scroll";
 import ArrowButton from "./ArrowButton";
 
-export default function Navbar() {
+export default function Navbar({ ready = true }: { ready?: boolean }) {
   const [active, setActive] = useState("home");
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -26,7 +26,7 @@ export default function Navbar() {
       if (el) io.observe(el);
     });
     return () => io.disconnect();
-  }, []);
+  }, [ready]);
 
   // Hide on scroll down, reveal on scroll up; solid backdrop once scrolled.
   useEffect(
@@ -52,7 +52,6 @@ export default function Navbar() {
   // Mobile menu: scroll lock, Escape, focus trap, focus return.
   useEffect(() => {
     if (!open) return;
-    stopScroll();
     document.body.style.overflow = "hidden";
     const focusables = () => Array.from(menuRef.current?.querySelectorAll<HTMLElement>("a,button") ?? []);
     focusables()[0]?.focus();
@@ -75,7 +74,6 @@ export default function Navbar() {
     return () => {
       document.removeEventListener("keydown", key);
       document.body.style.overflow = "";
-      startScroll();
       menuBtn.current?.focus();
     };
   }, [open]);
@@ -101,7 +99,7 @@ export default function Navbar() {
             : "border-transparent bg-white/60 backdrop-blur-md"
         }`}
       >
-        <a href="#" onClick={go("home")} className="font-display text-lg font-semibold tracking-tight" aria-label={`${profile.name} — home`}>
+        <a href="#" onClick={go("home")} className="font-display text-lg font-semibold tracking-tight" aria-label={`VS.dev, ${profile.name} — home`}>
           VS<span className="text-ink/40">.</span>dev
         </a>
 

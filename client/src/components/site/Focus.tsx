@@ -17,7 +17,7 @@ export default function Focus() {
             {focusAreas.map((f, i) => (
               <li key={f.title} className="relative py-8 first:pt-0">
                 {i > 0 && <span data-divider className="absolute inset-x-0 top-0 h-px bg-ink/20" />}
-                <div data-reveal className="grid gap-3 md:grid-cols-[4rem_1fr]">
+                <div data-reveal className="row-nudge grid gap-3 md:grid-cols-[4rem_1fr]">
                   <span className="label pt-2 text-muted-foreground">0{i + 1}</span>
                   <div>
                     <h3 className="display-md !text-[clamp(1.6rem,2.4vw+0.5rem,2.6rem)]">{f.title}</h3>

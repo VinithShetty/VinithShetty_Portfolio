@@ -1,42 +1,46 @@
-import { useEffect, useRef } from "react";
-import About from "@/components/site/About";
-import Certifications from "@/components/site/Certifications";
-import Contact from "@/components/site/Contact";
-import Education from "@/components/site/Education";
-import Experience from "@/components/site/Experience";
-import Focus from "@/components/site/Focus";
+import { lazy, Suspense, useEffect, useState } from "react";
 import Footer from "@/components/site/Footer";
 import Hero from "@/components/site/Hero";
-import Marquee from "@/components/site/Marquee";
+import Loader from "@/components/site/Loader";
 import Navbar from "@/components/site/Navbar";
-import Projects from "@/components/site/Projects";
-import Skills from "@/components/site/Skills";
-import { useScrollAnimations } from "@/lib/motion";
-import { initSmoothScroll } from "@/lib/smooth-scroll";
+import ScrollProgress from "@/components/site/ScrollProgress";
+import { whenGone } from "@/lib/loader";
+import { initMagnetic } from "@/lib/magnetic";
+import { scrollToId } from "@/lib/smooth-scroll";
+
+// Everything below the hero is a separate chunk. Starting the import at module load means it
+// downloads in parallel with the hero while the loading screen is up.
+const loadBelowFold = () => import("@/components/site/BelowFold");
+const BelowFold = lazy(loadBelowFold);
+loadBelowFold();
 
 export default function Home() {
-  const root = useRef<HTMLDivElement>(null);
+  const [belowReady, setBelowReady] = useState(false);
 
-  useEffect(() => initSmoothScroll(), []);
-  useScrollAnimations(root);
+  useEffect(() => initMagnetic(), []);
+
+  // Deep links (/#projects): the sections are lazy-loaded, so jump once the loader has lifted.
+  useEffect(() => {
+    if (!belowReady) return;
+    whenGone.then(() => {
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      if (id) setTimeout(() => scrollToId(id), 150);
+    });
+  }, [belowReady]);
 
   return (
-    <div ref={root}>
+    <div>
+      <Loader />
       <a href="#about" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-paper">
         Skip to content
       </a>
-      <Navbar />
+      <ScrollProgress />
+      <Navbar ready={belowReady} />
       <main>
         <Hero />
-        <Marquee />
-        <About />
-        <Focus />
-        <Projects />
-        <Experience />
-        <Education />
-        <Skills />
-        <Certifications />
-        <Contact />
+        <Suspense fallback={<div aria-hidden="true" style={{ minHeight: "100vh" }} />}>
+          <BelowFold onReady={() => setBelowReady(true)} />
+        </Suspense>
       </main>
       <Footer />
     </div>

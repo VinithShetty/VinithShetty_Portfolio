@@ -15,7 +15,7 @@ export default function Experience() {
           <span aria-hidden="true" data-line className="absolute bottom-0 left-[7px] top-2 w-px bg-ink md:left-[calc(25%-1px)]" />
 
           {experience.map((e) => (
-            <li key={`${e.org}-${e.period}`} data-item className="group relative grid gap-3 pb-16 pl-9 last:pb-0 md:grid-cols-4 md:gap-10 md:pl-0">
+            <li key={`${e.org}-${e.period}`} data-item data-from-x="-24" className="group relative grid gap-3 pb-16 pl-9 last:pb-0 md:grid-cols-4 md:gap-10 md:pl-0">
               <span aria-hidden="true" className="absolute left-0 top-2 h-[15px] w-[15px] rounded-full border-2 border-ink bg-paper transition-colors group-hover:bg-lime md:left-[calc(25%-8px)]" />
               <div className="md:pr-10 md:text-right">
                 <p className="label text-muted-foreground">{e.period}</p>

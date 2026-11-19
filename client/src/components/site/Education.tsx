@@ -15,7 +15,7 @@ export default function Education() {
         </div>
         <ul data-stagger className="mt-14 divide-y divide-white/15 border-y border-white/15 md:mt-20">
           {education.map((e, i) => (
-            <li key={`${e.institution}-${e.period}`} data-item className="grid gap-4 py-8 md:grid-cols-12 md:gap-8">
+            <li key={`${e.institution}-${e.period}`} data-item data-from-x="-24" className="grid gap-4 py-8 md:grid-cols-12 md:gap-8">
               <span className="label text-lime md:col-span-1">0{i + 1}</span>
               <div className="md:col-span-7">
                 <h3 className="display-md !text-[clamp(1.6rem,2.2vw+0.6rem,2.5rem)]">{e.qualification}{e.field ? ` in ${e.field}` : ""}</h3>

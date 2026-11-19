@@ -25,7 +25,7 @@ export default function About() {
             <p className="label text-paper/50">Technical focus</p>
             <ul className="mt-6 divide-y divide-white/10">
               {focus.map((f, i) => (
-                <li key={f} className="flex items-baseline justify-between gap-4 py-4 font-display text-2xl tracking-tight md:text-3xl">
+                <li key={f} className="row-nudge flex items-baseline justify-between gap-4 py-4 font-display text-2xl tracking-tight md:text-3xl">
                   {f}
                   <span className="label text-lime">0{i + 1}</span>
                 </li>
@@ -55,7 +55,7 @@ export default function About() {
               <p className="label text-muted-foreground">Tools I work with</p>
               <ul className="mt-4 flex flex-wrap gap-2">
                 {highlightTools.map((t) => (
-                  <li key={t} className="rounded-full border border-ink/20 px-4 py-2 text-sm font-medium">
+                  <li key={t} className="chip-lift rounded-full border border-ink/20 px-4 py-2 text-sm font-medium">
                     {t}
                   </li>
                 ))}

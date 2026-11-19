@@ -26,7 +26,7 @@ export default function Skills() {
                   <li
                     key={s}
                     data-item
-                    className="rounded-full border border-ink/20 px-5 py-2.5 font-display text-xl tracking-tight transition-colors duration-300 hover:border-ink hover:bg-lime md:text-2xl"
+                    className="rounded-full border border-ink/20 px-5 py-2.5 font-display text-xl tracking-tight chip-lift hover:border-ink hover:bg-lime md:text-2xl"
                   >
                     {s}
                   </li>

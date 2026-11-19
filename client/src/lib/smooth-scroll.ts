@@ -1,27 +1,10 @@
-import Lenis from "lenis";
-import { gsap, ScrollTrigger } from "./motion";
+/**
+ * Scrolling is 100% native: mouse wheel, trackpad, touch, keyboard and text selection are never intercepted,
+ * smoothed or delayed. This module only offers (a) a scroll listener and (b) smooth anchor navigation, which
+ * uses the browser's own `scrollIntoView` (honouring `scroll-padding-top` so headings clear the fixed header).
+ */
 
-let lenis: Lenis | null = null;
-
-/** Starts Lenis (skipped for reduced motion) and drives it from GSAP's ticker. Returns cleanup. */
-export function initSmoothScroll() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return () => {};
-  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1 });
-  lenis.on("scroll", ScrollTrigger.update);
-  const tick = (t: number) => lenis?.raf(t * 1000);
-  gsap.ticker.add(tick);
-  gsap.ticker.lagSmoothing(0);
-  return () => {
-    gsap.ticker.remove(tick);
-    lenis?.destroy();
-    lenis = null;
-  };
-}
-
-export const stopScroll = () => lenis?.stop();
-export const startScroll = () => lenis?.start();
-
-/** Subscribes to scroll position (Lenis when active, window otherwise). */
+/** Subscribes to scroll position changes. Passive; ignores sub-4px jitter. */
 export function onScroll(cb: (y: number, dir: 1 | -1) => void) {
   let last = window.scrollY;
   const handler = () => {
@@ -35,10 +18,9 @@ export function onScroll(cb: (y: number, dir: 1 | -1) => void) {
 }
 
 export function scrollToId(id: string) {
-  const el = id === "home" ? document.body : document.getElementById(id);
-  if (!el) return;
-  const offset = id === "home" ? 0 : -88;
-  if (lenis) lenis.scrollTo(id === "home" ? 0 : el, { offset, duration: 1.4 });
-  else window.scrollTo({ top: id === "home" ? 0 : el.getBoundingClientRect().top + window.scrollY + offset, behavior: "auto" });
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const behavior: ScrollBehavior = reduce ? "auto" : "smooth";
+  if (id === "home") window.scrollTo({ top: 0, behavior });
+  else document.getElementById(id)?.scrollIntoView({ behavior, block: "start" });
   history.replaceState(null, "", id === "home" ? "#" : `#${id}`);
 }

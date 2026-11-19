@@ -34,8 +34,10 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="px-3 pb-3 md:px-6 md:pb-6">
+    <section id="contact" data-native-cursor className="px-3 pb-3 md:px-6 md:pb-6">
       <div className="on-dark grain relative mx-auto max-w-[1500px] overflow-hidden rounded-[32px] bg-ink px-5 py-20 text-paper md:px-14 md:py-28">
+        {/* Ambient glow: a soft lime light that drifts slowly as the panel scrolls past */}
+        <div aria-hidden="true" data-depth="14" className="pointer-events-none absolute -right-40 -top-48 h-[36rem] w-[36rem] rounded-full bg-lime/[0.07] blur-3xl" />
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-6">
             <p data-reveal className="pill-tag label !border-white/20 !bg-white/10 text-paper">Contact</p>

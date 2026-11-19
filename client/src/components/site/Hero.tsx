@@ -1,31 +1,79 @@
-import { useRef } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { ArrowDown, Download, Sparkles } from "lucide-react";
 import portrait from "@/assets/profile.jpg";
 import { profile } from "@/data/profile";
-import { EASE, gsap, useMotion } from "@/lib/motion";
+import { EASE, gsap, ScrollTrigger, useMotion } from "@/lib/motion";
+import { loaderState, whenGone, whenReady } from "@/lib/loader";
 import { scrollToId } from "@/lib/smooth-scroll";
 import ArrowButton from "./ArrowButton";
 import Words from "./Words";
 
+// The 3D scene is a separate chunk (three.js), fetched only after the loader has lifted and the browser is idle.
+const HeroScene = lazy(() => import("./HeroScene"));
+
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
+  const [scene, setScene] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
+  const onSceneReady = useCallback(() => setSceneReady(true), []);
+  const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const nav = typeof navigator !== "undefined" ? (navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } }) : undefined;
+  const lite = typeof window !== "undefined" && (window.innerWidth < 768 || (nav?.hardwareConcurrency ?? 8) <= 4 || (nav?.deviceMemory ?? 8) <= 4);
+
+  useEffect(() => {
+    // Data Saver: skip WebGL entirely. Phones get the scene too, in its lighter `lite` mode (fewer particles, lower pixel ratio).
+    if (nav?.connection?.saveData) return;
+    let id: number | ReturnType<typeof setTimeout> = 0;
+    whenGone.then(() => {
+      id = "requestIdleCallback" in window ? window.requestIdleCallback(() => setScene(true), { timeout: 1500 }) : setTimeout(() => setScene(true), 300);
+    });
+    return () => { if ("cancelIdleCallback" in window) window.cancelIdleCallback(id as number); else clearTimeout(id); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Choreographed entrance: label → headline words → copy → CTAs → portrait → wordmark.
-  useMotion(root, () => {
+  useMotion(root, ({ mobile }) => {
     const q = (s: string) => root.current!.querySelectorAll(s);
-    const tl = gsap.timeline({ defaults: { ease: EASE }, delay: 0.15 });
+    const tl = gsap.timeline({ defaults: { ease: EASE }, paused: true });
+    whenReady.then(() => gsap.delayedCall(0.1, () => tl.play()));
     tl.from(q("[data-h=pill]"), { y: 20, opacity: 0, duration: 0.9 })
       .fromTo(q("[data-h=title] .wi"), { yPercent: 115 }, { yPercent: 0, duration: 1.3, stagger: 0.07 }, 0.1)
-      .from(q("[data-h=copy]"), { y: 24, opacity: 0, duration: 1 }, 0.55)
-      .from(q("[data-h=cta] > *"), { y: 24, opacity: 0, duration: 0.9, stagger: 0.1 }, 0.7)
+      .from(q("[data-h=copy]"), { y: 24, duration: 1 }, 0.55) // slide only: text stays at full contrast while it moves
+      .from(q("[data-h=cta] > *"), { y: 24, duration: 0.9, stagger: 0.1 }, 0.7)
       .fromTo(q("[data-h=card]"), { clipPath: "inset(12% 0% 0% 0% round 32px)", opacity: 0 }, { clipPath: "inset(0% 0% 0% 0% round 32px)", opacity: 1, duration: 1.5 }, 0.3)
       .from(q("[data-h=card] img"), { scale: 1.25, duration: 1.8 }, 0.3)
       .from(q("[data-h=chip]"), { y: 16, opacity: 0, duration: 0.8, stagger: 0.1 }, 1.1)
-      .from(q("[data-h=ghost] .wi"), { yPercent: 100, duration: 1.6, stagger: 0.12 }, 0.5)
+      .from(q("[data-h=ghost]"), { yPercent: 100, duration: 1.6 }, 0.5)
       .from(q("[data-h=cue]"), { opacity: 0, duration: 1 }, 1.4);
 
+    // Looping "text selection" scan over the headline: a lime selection with a caret marks one word at a
+    // time and hands off to the next, then the headline rests and it repeats. Driven by CSS variables on
+    // each word (see .sel-loop in index.css).
+    const words = q("[data-h=title] .w");
+    if (!mobile) {
+    const loop = gsap.timeline({ repeat: -1, repeatDelay: 2.4, paused: true, defaults: { ease: "power3.inOut" } });
+    whenReady.then(() => gsap.delayedCall(2.8, () => loop.play()));
+    words.forEach((w, i) => {
+      const t = i * 0.5;
+      loop
+        .set(w, { "--sel": 0, "--a": 1, "--caret": 1 }, t)
+        .to(w, { "--sel": 1, duration: 0.45 }, t)
+        .set(w, { "--caret": 0 }, t + 0.45)
+        .to(w, { "--a": 0, duration: 0.45, ease: "power2.out" }, t + 0.8);
+    });
+    // Don't animate while the hero is off-screen.
+    ScrollTrigger.create({ trigger: root.current, start: "top bottom", end: "bottom top", onToggle: (self) => { if (loaderState.done) loop.paused(!self.isActive); } });
+    }
+
+    // Depth: the portrait column drifts slightly against the scroll, the ghost wordmark lags behind it.
+    if (!mobile)
+      gsap.to(q("[data-h=visual]"), {
+        yPercent: -5, ease: "none",
+        scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+      });
+
     // Ghost wordmark drifts slower than the page.
-    gsap.to(q("[data-h=ghost]"), {
+    gsap.to(q("[data-h=ghostwrap]"), {
       yPercent: -25, ease: "none",
       scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
     });
@@ -33,13 +81,21 @@ export default function Hero() {
 
   return (
     <section id="home" ref={root} className="relative flex min-h-[100svh] flex-col overflow-hidden px-5 pb-10 pt-28 md:px-10 lg:pt-32">
+      {/* Decorative 3D scene behind the content: aria-hidden, no pointer events, fades in once drawn */}
+      {scene && (
+        <div aria-hidden="true" className={`scene-mask pointer-events-none absolute inset-0 z-0 transition-opacity duration-[1200ms] ${sceneReady ? "opacity-100" : "opacity-0"}`}>
+          <Suspense fallback={null}>
+            <HeroScene reduced={reduced} lite={lite} onReady={onSceneReady} />
+          </Suspense>
+        </div>
+      )}
       <div className="mx-auto grid w-full max-w-[1400px] flex-1 items-center gap-10 lg:grid-cols-12 lg:gap-6">
         <div className="relative z-10 lg:col-span-7">
           <span data-h="pill" className="pill-tag label">
             <Sparkles size={13} aria-hidden="true" /> {profile.role}
           </span>
 
-          <h1 data-h="title" className="display-xl mt-7 max-w-[11ch]">
+          <h1 data-h="title" className="display-xl sel-loop mt-7 max-w-[11ch]">
             <span className="sr-only">{profile.name} — </span>
             <Words text="AI-powered software, built end to end." mode="none" />
           </h1>
@@ -64,9 +120,9 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="relative lg:col-span-5">
+        <div data-h="visual" className="relative lg:col-span-5">
           {/* Restrained technical detail: slow-turning rings with a few nodes */}
-          <svg aria-hidden="true" viewBox="0 0 600 600" className="orbit pointer-events-none absolute left-1/2 top-1/2 z-0 hidden w-[130%] max-w-none -translate-x-1/2 -translate-y-1/2 md:block">
+          <svg aria-hidden="true" viewBox="0 0 600 600" className={`orbit pointer-events-none absolute left-1/2 top-1/2 z-0 hidden w-[130%] max-w-none -translate-x-1/2 -translate-y-1/2 ${sceneReady ? "" : "md:block"}`}>
             <g fill="none" stroke="#131313" strokeOpacity="0.14">
               <circle cx="300" cy="300" r="290" />
               <circle cx="300" cy="300" r="225" strokeDasharray="2 8" />
@@ -110,9 +166,9 @@ export default function Hero() {
         </a>
       </div>
 
-      <p aria-hidden="true" className="pointer-events-none absolute inset-x-0 -bottom-[0.14em] select-none whitespace-nowrap text-center font-display text-[17.5vw] font-semibold leading-[0.8] tracking-[-0.06em] text-ink/[0.055]">
-        <span data-h="ghost" className="block"><Words text={profile.name} mode="none" /></span>
-      </p>
+      <div aria-hidden="true" data-h="ghostwrap" className="pointer-events-none absolute inset-x-0 -bottom-[0.14em] overflow-hidden select-none">
+        <span data-h="ghost" data-text={profile.name} className="ghost-text block" />
+      </div>
     </section>
   );
 }

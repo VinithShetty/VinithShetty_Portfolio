@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "lenis/dist/lenis.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -69,6 +68,7 @@
 }
 
 html {
+  scrollbar-gutter: stable; /* toggling overflow (loader, mobile menu) must not change the layout width */
   scroll-padding-top: 88px;
   -webkit-text-size-adjust: 100%;
 }
@@ -93,7 +93,7 @@ html {
 
 /* Word mask for headline reveals (see <Words/>) */
 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0.06em 0.04em 0.14em; margin: -0.06em -0.04em -0.14em; }
-.wi { display: inline-block; will-change: transform; }
+.wi { display: inline-block; }
 
 /* ---------- Components ---------- */
 .pill-tag {
@@ -132,8 +132,8 @@ html {
 .media-frame { position: relative; overflow: hidden; border-radius: 28px; background: var(--color-ink); }
 .media-frame img { width: 100%; height: 100%; object-fit: cover; display: block; transform-origin: center; }
 .media-frame [data-parallax] { height: 112%; margin-top: -6%; }
-.media-hover { transition: transform 1.1s var(--ease-out); }
-.group:hover .media-hover { transform: scale(1.045); }
+.media-hover { transition: transform 1.1s var(--ease-out); transform: translateX(calc(var(--d, 0) * var(--px, 0px))) scale(calc(var(--zb, 1) * var(--zs, 1))); }
+.group:hover .media-hover { --zs: 1.045; }
 
 /* Marquee (CSS only, paused for reduced motion) */
 @keyframes marquee { to { transform: translateX(-50%); } }
@@ -153,4 +153,139 @@ html {
 .grain::after {
   content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.06; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Looping "text selection" sweep for the hero headline (variables are tweened by GSAP in Hero.tsx):
+   --sel 0..1 selection width, --a selection opacity, --caret 0/1 leading-edge caret. */
+.sel-loop .w {
+  --sel: 0; --a: 1; --caret: 0;
+  border-radius: 0.1em;
+  background-repeat: no-repeat;
+  background-image:
+    linear-gradient(var(--color-ink), var(--color-ink)),
+    linear-gradient(color-mix(in srgb, var(--color-lime) calc(var(--a) * 100%), transparent), color-mix(in srgb, var(--color-lime) calc(var(--a) * 100%), transparent));
+  background-size: calc(var(--caret) * 0.06em) 72%, calc(var(--sel) * 100%) 78%;
+  background-position: calc(var(--sel) * 100%) 52%, 0 52%;
+}
+
+/* Hero ghost wordmark: drawn from a data attribute so it is decoration only (no text node for AT or contrast checks) */
+.ghost-text::before {
+  content: attr(data-text); display: block; text-align: center; white-space: nowrap; line-height: 0.8; padding-bottom: 0.12em;
+  font-family: var(--font-display); font-weight: 600; letter-spacing: -0.06em; font-size: 17.5vw; color: rgb(19 19 19 / 0.055);
+}
+
+/* Loader caret blink */
+@keyframes caret-blink { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+.caret-blink { animation: caret-blink 0.9s steps(1) infinite; }
+@media (prefers-reduced-motion: reduce) { .caret-blink { animation: none; } }
+
+/* Loader: the bottom edge curves as the screen lifts away like a curtain */
+.loader-curve { border-bottom-left-radius: 50% 7vw; border-bottom-right-radius: 50% 7vw; transition: border-radius 0.5s var(--ease-out); }
+
+/* ---------- Interaction polish (hover-capable devices only; 150-350ms) ---------- */
+/* Lift via `top`/`left` (layout-neutral): GSAP writes inline translate/transform on revealed elements, which would override a CSS translate. */
+.chip-lift, .row-nudge { position: relative; top: 0; left: 0; transition: top 0.28s var(--ease-out), left 0.28s var(--ease-out), box-shadow 0.28s var(--ease-out), background-color 0.25s, border-color 0.25s; }
+@media (hover: hover) and (pointer: fine) {
+  .chip-lift:hover { top: -3px; box-shadow: 0 12px 24px -16px rgb(19 19 19 / 0.5); }
+  .row-nudge:hover { left: 6px; }
+
+}
+@media (prefers-reduced-motion: reduce) {
+  .chip-lift, .row-nudge { transition: none; }
+}
+
+/* ---------- Smooth anchor scrolling: the browser's own, only when motion is allowed ---------- */
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* ---------- Project cards: shallow 3D tilt + light (see lib/tilt.ts). Text stays flat and readable. ---------- */
+.tilt-card {
+  --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 50%;
+  transform: perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry));
+  transform-style: preserve-3d;
+  transition: box-shadow 0.35s var(--ease-out);
+}
+.tilt-glow {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+  background: radial-gradient(460px circle at var(--mx) var(--my), color-mix(in srgb, currentColor 10%, transparent), transparent 60%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tilt-card:hover { box-shadow: 0 28px 50px -30px rgb(19 19 19 / 0.5); } /* elevation by shadow only: text never moves */
+  .tilt-card:hover .tilt-glow { opacity: 1; }
+  .tilt-card:hover .tilt-media { transform: translateZ(18px); box-shadow: 0 18px 30px -18px rgb(0 0 0 / 0.55); }
+}
+.tilt-media { transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out); }
+@media (prefers-reduced-motion: reduce) { .tilt-card, .tilt-media, .tilt-glow { transition: none; } .tilt-card { transform: none; } }
+
+/* Hero 3D scene: fades out over the text so the heading and copy always have a clean background.
+   Narrow screens: text on top, scene behind the portrait below. Wide screens: text left, scene right. */
+.scene-mask {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 50%, #000 66%);
+  mask-image: linear-gradient(to bottom, transparent 50%, #000 66%);
+}
+@media (min-width: 900px) {
+  .scene-mask {
+    -webkit-mask-image: linear-gradient(to right, transparent 40%, #000 62%);
+    mask-image: linear-gradient(to right, transparent 40%, #000 62%);
+  }
+}
+
+/* ---------- Scroll reveals (classes are added by cssReveals() in lib/motion.ts; no class = fully visible) ---------- */
+.rv { opacity: 0; transform: translate3d(var(--rx, 0px), var(--ry, 32px), 0); }
+.rv.in { opacity: 1; transform: none; transition: opacity 0.8s var(--ease-out) var(--rd, 0s), transform 0.8s var(--ease-out) var(--rd, 0s); }
+.rv-card { opacity: 0; transform: perspective(1100px) translateY(28px) rotateX(6deg); transform-origin: 50% 100%; }
+.rv-card.in { opacity: 1; transform: none; transition: opacity 0.8s var(--ease-out) var(--rd, 0s), transform 0.8s var(--ease-out) var(--rd, 0s); }
+@media (max-width: 767px) { .rv-card { transform: translateY(24px); } }
+.rv-words .wi { transform: translateY(115%); }
+.rv-words.in .wi { transform: none; transition: transform 1.2s var(--ease-out) calc(var(--i, 0) * 45ms); }
+.rv-div { transform: scaleX(0); transform-origin: left; }
+.rv-div.in { transform: none; transition: transform 1.4s var(--ease-out); }
+
+/* ---------- Project carousel: native scroll-snap strip + CSS-variable-driven 3D depth ---------- */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.carousel {
+  --slide-w: min(92vw, 1060px);
+  padding-inline: max(0.75rem, calc((100% - var(--slide-w)) / 2));
+  perspective: 1700px; perspective-origin: 50% 35%;
+  overscroll-behavior-x: contain; /* a sideways flick at the ends never triggers browser back/forward */
+}
+.carousel.is-dragging { cursor: grabbing; user-select: none; }
+.carousel-slide {
+  --d: 0; --ad: 0; --zb: 1.07; --px: -22px;           /* --d: signed distance from centre in slide widths */
+  transform: translateZ(calc(var(--ad) * -120px)) rotateY(calc(var(--d) * -22deg)) scale(calc(1 - var(--ad) * 0.07));
+  opacity: calc(1 - var(--ad) * 0.5);
+  will-change: transform, opacity;
+}
+.carousel-slide:not([data-active="true"]) .tilt-media { cursor: grab; }
+.carousel-slide:not([data-active="true"]) {
+  user-select: none;
+}
+.carousel-slide[data-active="true"] .tilt-media { cursor: grab; }
+.carousel-slide:not([data-active="true"]) a, .carousel-slide:not([data-active="true"]) button { pointer-events: none; } /* first click focuses the card */
+/* light sheen sweeping across a card as it travels to the centre */
+.sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; }
+.sheen span { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.16) 50%, transparent 62%); transform: translateX(calc(var(--d, 0) * 100%)); opacity: min(1, calc(var(--ad, 0) * 3)); }
+.carousel-btn {
+  display: grid; place-items: center; width: 2.9rem; height: 2.9rem; border-radius: 999px; border: 1px solid rgb(19 19 19 / 0.3);
+  transition: background-color 0.25s, color 0.25s, border-color 0.25s, transform 0.3s var(--ease-out), opacity 0.25s;
+}
+.carousel-btn:hover:not(:disabled) { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
+.carousel-btn:active:not(:disabled) { transform: scale(0.94); }
+.carousel-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+@media (max-width: 1023px) {
+  /* a taller neighbour is trimmed to the focused card's height and fades out instead of ending in a hard cut */
+  .carousel-slide:not([data-active="true"]) {
+    max-height: var(--hmax, none); overflow: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--hmax, 9999px) - 80px), transparent var(--hmax, 9999px));
+    mask-image: linear-gradient(to bottom, #000 calc(var(--hmax, 9999px) - 80px), transparent var(--hmax, 9999px));
+  }
+}
+@media (max-width: 767px) {
+  .carousel { --slide-w: 88vw; }
+  .carousel-slide { transform: translateZ(calc(var(--ad) * -70px)) rotateY(calc(var(--d) * -14deg)) scale(calc(1 - var(--ad) * 0.05)); --px: -12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carousel { perspective: none; scroll-behavior: auto; }
+  .carousel-slide { transform: none; --px: 0px; --zb: 1; will-change: auto; }
+  .sheen { display: none; }
 }
